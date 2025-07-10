@@ -1,0 +1,17 @@
+server:
+  port: 9494
+
+spring:
+  datasource:
+    password: password
+    url: jdbc:postgresql://localhost:5432/client_db
+    username: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true

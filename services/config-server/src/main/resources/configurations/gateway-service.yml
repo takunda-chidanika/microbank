@@ -1,0 +1,32 @@
+server:
+  port: 9393
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            # ✅ Gateway routes for versioned API paths:
+            - id: client
+              uri: lb://client
+              predicates:
+                - Path=/api/v1/clients/**
+              filters:
+                - RewritePath=/api/v1/clients/(?<segment>.*), /${segment}
+
+            - id: bank
+              uri: lb://bank
+              predicates:
+                - Path=/api/v1/banks/**
+              filters:
+                - RewritePath=/api/v1/banks/(?<segment>.*), /${segment}
+
+            # ✅ And Swagger:
+            - id: client-swagger
+              uri: lb://client
+              predicates:
+                - Path=/api/v1/clients/swagger-ui.html
+                - Path=/api/v1/clients/v3/api-docs/**
+              filters:
+                - RewritePath=/api/v1/clients/(?<segment>.*), /${segment}

@@ -1,0 +1,81 @@
+services:
+  #  Client key
+  keycloak_auth:
+    container_name: keycloak_auth
+    image: quay.io/keycloak/keycloak:26.0.5
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HTTP_ENABLED=true
+      - KC_HOSTNAME_STRICT_HTTPS=false
+    ports:
+      - "8080:8080"
+    command: start-dev
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      - microservices-net
+
+
+  # Client Database
+  postgresql_client:
+    container_name: microbank_client_db
+    image: postgres:17
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: client_db
+      PGDATA: /data/postgres
+    volumes:
+      - client_db:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  # Bank Database
+  postgresql_bank:
+    container_name: microbank_bank_db
+    image: postgres:17
+    environment:
+      POSTGRES_DB: bank_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - bank_db:/data/postgres
+    ports:
+      - "5434:5432"
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  # PG Admin Dashboard
+  pgadmin:
+    container_name: ms_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  client_db:
+  bank_db:
+  pgadmin:
+  mongo:
+  keycloak_data:
