@@ -13,4 +13,12 @@ export class ClientService {
   static async getClientProfile(id: string): Promise<ClientResponse> {
     return apiGet<ClientResponse>(`/clients/profile/${id}`)
   }
+
+  static async getClientProfileByKeycloakId(keycloakId: string): Promise<ClientResponse> {
+    return apiGet<ClientResponse>(`/clients/profile/keycloak/${keycloakId}`)
+  }
+
+  static async logout(): Promise<{ message: string }> {
+    return apiPost<{ message: string }>('/clients/logout', {}, false)
+  }
 }

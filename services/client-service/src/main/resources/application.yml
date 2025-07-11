@@ -1,6 +1,6 @@
 spring:
   config:
-    import: optional:configserver:http://localhost:9090
+    import: optional:configserver:http://config-server:9090
   application:
     name: client-service
 
@@ -8,19 +8,18 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-            issuer-uri:  http://localhost:8080/realms/microbank
+            issuer-uri:  http://keycloak_auth:8080/realms/microbank
             jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
 jwt:
   auth:
     converter:
-      resource-id: alibou-rest-api
+      resource-id: microbank
       principle-attribute: preferred_username
 
-#springdoc:
-#  api-docs:
-#    enabled: true
-#    path: /clients/v3/api-docs
-#  swagger-ui:
-#    enabled: true
-#    path: /clients/swagger-ui.html
+keycloak:
+  server-url: http://keycloak_auth:8080
+  realm: microbank
+  client-id: microbank
+  client-secret: SYZd71iMp4TvnUqgPewmbriC48ueqCzy
+

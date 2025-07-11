@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react'
 import Layout from '@/components/Layout'
 import { AccountService } from '@/services/account.service'
 import { AccountResponse, CreateAccountRequest } from '@/types'
+import { useAuthUser } from '@/hooks/useAuthUser'
 
 export default function Accounts() {
+  const { profile, clientId, isAuthenticated, isLoading: userLoading, error: userError } = useAuthUser()
   const [accounts, setAccounts] = useState<AccountResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -18,13 +20,24 @@ export default function Accounts() {
   })
 
   useEffect(() => {
-    fetchAccounts()
-  }, [])
+    if (isAuthenticated && clientId) {
+      fetchAccounts()
+    }
+  }, [isAuthenticated, clientId])
 
   const fetchAccounts = async () => {
     try {
-      const data = await AccountService.getAllAccounts()
-      setAccounts(data)
+      if (!clientId) {
+        setError('No client ID available')
+        return
+      }
+
+      // Get accounts for this client using the database client ID
+      const userAccounts = await AccountService.getAccountsByClient(clientId)
+      setAccounts(userAccounts)
+      
+      // Auto-fill the client ID in the form
+      setFormData(prev => ({ ...prev, clientId }))
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -48,11 +61,29 @@ export default function Accounts() {
     }
   }
 
-  if (loading) {
+  if (userLoading || loading) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+        </div>
+      </Layout>
+    )
+  }
+
+  if (userError || !isAuthenticated) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">{userError || 'Please log in to view your accounts'}</p>
+            <button 
+              onClick={() => window.location.href = '/auth/signin'}
+              className="btn btn-primary"
+            >
+              Sign In
+            </button>
+          </div>
         </div>
       </Layout>
     )
@@ -89,11 +120,13 @@ export default function Accounts() {
                 <input
                   type="text"
                   value={formData.clientId}
-                  onChange={(e) => setFormData({...formData, clientId: e.target.value})}
-                  required
-                  className="input"
-                  placeholder="Enter client ID"
+                  readOnly
+                  className="input bg-gray-50"
+                  placeholder="Auto-filled from your profile"
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  This is automatically filled from your user profile
+                </p>
               </div>
               
               <div>

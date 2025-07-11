@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     password: password
-    url: jdbc:postgresql://localhost:5432/client_db
+    url: jdbc:postgresql://microbank_client_db:5432/client_db
     username: root
     driver-class-name: org.postgresql.Driver
   jpa:

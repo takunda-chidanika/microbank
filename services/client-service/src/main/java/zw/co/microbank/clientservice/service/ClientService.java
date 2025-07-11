@@ -1,5 +1,6 @@
 package zw.co.microbank.clientservice.service;
 
+import org.keycloak.representations.AccessTokenResponse;
 import zw.co.microbank.clientservice.dto.ClientResponse;
 import zw.co.microbank.clientservice.dto.CreateClientRequest;
 import zw.co.microbank.clientservice.dto.LoginRequest;
@@ -14,8 +15,11 @@ public interface ClientService {
     ClientResponse createClient(CreateClientRequest request);
 
     // Client Login
-    ClientResponse loginClient(LoginRequest request);
+    AccessTokenResponse loginClient(LoginRequest request);
 
     //    Fetch current client profile
     ClientResponse fetchClientProfile(String id);
+    
+    // Fetch client profile by Keycloak ID
+    ClientResponse fetchClientProfileByKeycloakId(String keycloakId);
 }

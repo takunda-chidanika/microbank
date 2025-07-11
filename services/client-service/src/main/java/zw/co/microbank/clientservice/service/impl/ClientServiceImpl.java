@@ -1,18 +1,19 @@
 package zw.co.microbank.clientservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.stereotype.Service;
 import zw.co.microbank.clientservice.dto.ClientResponse;
 import zw.co.microbank.clientservice.dto.CreateClientRequest;
 import zw.co.microbank.clientservice.dto.LoginRequest;
 import zw.co.microbank.clientservice.entity.Client;
+import zw.co.microbank.clientservice.exception.ClientBlacklistedException;
 import zw.co.microbank.clientservice.exception.ResourceAlreadyExistsException;
 import zw.co.microbank.clientservice.exception.ResourceNotFoundException;
 import zw.co.microbank.clientservice.mapper.ClientMapper;
 import zw.co.microbank.clientservice.repository.ClientRepository;
 import zw.co.microbank.clientservice.service.ClientService;
 
-import java.util.UUID;
 
 /**
  * Author: tjc
@@ -22,21 +23,25 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
+    private final KeycloakUserServiceImpl keycloakUserService;
     private final ClientRepository clientRepository;
+//    private final KeycloakUserService keycloakUserService;
 
     @Override
     public ClientResponse createClient(CreateClientRequest request) {
 
         var clientExistByEmail = clientRepository.existsByEmail(request.email());
 
+        var keycloakId = keycloakUserService.createUser(request).getId();
+
+        keycloakUserService.createUser(request);
+
         if (!clientExistByEmail) {
-            //  Create Keycloak client and retrieve the keycloak id
-            var keycloakId = "123456";
 
             var clientRequest = Client.builder()
                     .name(request.name())
                     .email(request.email())
-                    .keycloakId(UUID.randomUUID().toString())
+                    .keycloakId(keycloakId)
                     .blacklisted(false)
                     .build();
 
@@ -49,9 +54,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientResponse loginClient(LoginRequest request) {
-//        Handle Keycloak login and return the user information
-        return null;
+    public AccessTokenResponse loginClient(LoginRequest request) {
+        return keycloakUserService.getUserAccessToken(request.email(), request.password());
     }
 
     @Override
@@ -59,6 +63,26 @@ public class ClientServiceImpl implements ClientService {
         var client = clientRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Client", id)
         );
+
+        // Check if client is blacklisted
+        if (client.getBlacklisted() != null && client.getBlacklisted()) {
+            throw new ClientBlacklistedException("Client is blacklisted and cannot access services");
+        }
+
+        return ClientMapper.mapToClientResponse(client);
+    }
+
+    @Override
+    public ClientResponse fetchClientProfileByKeycloakId(String keycloakId) {
+        var client = clientRepository.findByKeycloakId(keycloakId).orElseThrow(
+                () -> new ResourceNotFoundException("Client", keycloakId)
+        );
+
+        // Check if client is blacklisted
+        if (client.getBlacklisted() != null && client.getBlacklisted()) {
+            throw new ClientBlacklistedException("Client is blacklisted and cannot access services");
+        }
+
         return ClientMapper.mapToClientResponse(client);
     }
 

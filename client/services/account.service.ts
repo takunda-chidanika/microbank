@@ -14,6 +14,12 @@ export class AccountService {
     return apiGet<AccountResponse>(`/banks/accounts/client/${clientId}`)
   }
 
+  static async getAccountsByClient(clientId: string): Promise<AccountResponse[]> {
+    // Backend returns a single account per client, so we wrap it in an array
+    const account = await apiGet<AccountResponse>(`/banks/accounts/client/${clientId}`)
+    return [account]
+  }
+
   static async getAccountByNumber(accountNumber: string): Promise<AccountResponse> {
     return apiGet<AccountResponse>(`/banks/accounts/number/${accountNumber}`)
   }

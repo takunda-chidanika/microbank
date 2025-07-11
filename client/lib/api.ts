@@ -50,11 +50,16 @@ export async function apiRequest<T>(
   
   const url = `${API_BASE_URL}${endpoint}`
   
-  console.log(`🚀 Making ${options.method || 'GET'} request to:`, url)
-  console.log('📋 Request headers:', headers)
+  // Skip logging for registration and login endpoints to avoid issues
+  const isPublicEndpoint = endpoint.includes('/register') || endpoint.includes('/login')
   
-  if (options.body) {
-    console.log('📦 Request body:', options.body)
+  if (!isPublicEndpoint) {
+    console.log(`🚀 Making ${options.method || 'GET'} request to:`, url)
+    console.log('📋 Request headers:', headers)
+    
+    if (options.body) {
+      console.log('📦 Request body:', options.body)
+    }
   }
   
   const response = await fetch(url, {
@@ -65,12 +70,14 @@ export async function apiRequest<T>(
     },
   })
   
-  console.log(`📨 Response status: ${response.status} ${response.statusText}`)
-  
-  if (!response.ok) {
-    console.log('❌ API Error Response:', response)
-    // Log response headers for debugging
-    console.log('📋 Response headers:', Object.fromEntries(response.headers.entries()))
+  if (!isPublicEndpoint) {
+    console.log(`📨 Response status: ${response.status} ${response.statusText}`)
+    
+    if (!response.ok) {
+      console.log('❌ API Error Response:', response)
+      // Log response headers for debugging
+      console.log('📋 Response headers:', Object.fromEntries(response.headers.entries()))
+    }
   }
   
   return handleApiResponse<T>(response)

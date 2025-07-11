@@ -10,6 +10,29 @@ export const authOptions: NextAuthOptions = {
       issuer: process.env.AUTH_KEYCLOAK_ISSUER!,
     }),
   ],
+  events: {
+    async signOut({ token }) {
+      console.log('🔐 SignOut Event - Clearing token and logging out from Keycloak')
+      
+      // Log out from Keycloak if we have the necessary token info
+      if (token?.accessToken) {
+        try {
+          const logoutUrl = `${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/logout`
+          const params = new URLSearchParams({
+            id_token_hint: token.accessToken as string,
+            post_logout_redirect_uri: process.env.NEXTAUTH_URL || 'http://localhost:3000'
+          })
+          
+          await fetch(`${logoutUrl}?${params}`, {
+            method: 'GET',
+          })
+          console.log('✅ Successfully logged out from Keycloak')
+        } catch (error) {
+          console.error('❌ Error logging out from Keycloak:', error)
+        }
+      }
+    },
+  },
   callbacks: {
     async jwt({ token, account, user, profile }) {
       // Initial sign in

@@ -4,27 +4,23 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ClientService } from '@/services/client.service'
-import { KeycloakService } from '@/lib/keycloak'
 import { CreateClientRequest } from '@/types'
 
 interface RegistrationFormData {
-  firstName: string
-  lastName: string
+  name: string
   email: string
   password: string
 }
 
 export default function Register() {
   const [formData, setFormData] = useState<RegistrationFormData>({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     password: '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [currentStep, setCurrentStep] = useState('')
   const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,37 +34,15 @@ export default function Register() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    setCurrentStep('Creating Keycloak account...')
 
     try {
-      // Step 1: Create user in Keycloak
-      const keycloakUser = await KeycloakService.createUser({
-        username: formData.email,
-        email: formData.email,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        password: formData.password,
-      })
-
-      setCurrentStep('Creating client profile...')
-
-      // Step 2: Create client in backend
-      const clientData: CreateClientRequest = {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        password: formData.password,
-      }
-
-      await ClientService.createClient(clientData)
-      
-      setCurrentStep('Registration complete!')
+      await ClientService.createClient(formData)
       setSuccess(true)
       setTimeout(() => {
         router.push('/auth/signin')
       }, 2000)
     } catch (err: any) {
       setError(err.message || 'Registration failed')
-      setCurrentStep('')
     } finally {
       setLoading(false)
     }
@@ -116,34 +90,18 @@ export default function Register() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-              First Name
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name
             </label>
             <input
               type="text"
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               required
               className="input"
-              placeholder="Enter your first name"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-              Last Name
-            </label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
-              className="input"
-              placeholder="Enter your last name"
+              placeholder="Enter your full name"
             />
           </div>
 
@@ -179,12 +137,6 @@ export default function Register() {
             />
           </div>
 
-          {currentStep && (
-            <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
-              {currentStep}
-            </div>
-          )}
-
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
               {error}
@@ -196,7 +148,7 @@ export default function Register() {
             disabled={loading}
             className="btn btn-primary w-full"
           >
-            {loading ? currentStep || 'Creating Account...' : 'Create Account'}
+            {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 

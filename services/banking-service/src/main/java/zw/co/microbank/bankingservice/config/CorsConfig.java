@@ -1,14 +1,9 @@
-package zw.co.microbank.apigateway.config;
+package zw.co.microbank.bankingservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-/**
- * Author: tjc
- * Created on 7/11/25
- */
 
 @Configuration
 public class CorsConfig {
@@ -18,11 +13,8 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // ✅ match all endpoints properly
-                        .allowedOrigins(
-                                "http://localhost:8080",
-                                "http://localhost:4200"
-                        ) // ✅ no spaces in URLs
+                registry.addMapping("*")
+                        .allowedOrigins("http://localhost:3000, http://localhost:8080, http://localhost:4200 ") // Your Next.js dev URL
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true)
@@ -31,4 +23,3 @@ public class CorsConfig {
         };
     }
 }
-
