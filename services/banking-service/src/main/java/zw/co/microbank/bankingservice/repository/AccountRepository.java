@@ -20,4 +20,8 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     BigDecimal getBalanceByAccountNumber(@Param("accountNumber") String accountNumber);
 
     Optional<Account> findAccountByAccountNumber(String accountNumber);
+
+    boolean existsByAccountNumber(String accountNumber);
+
+    Optional<Account> findAccountByClientId(String clientId);
 }

@@ -3,3 +3,17 @@ spring:
     import: optional:configserver:http://localhost:9090
   application:
     name: gateway-service
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      -   name: gateway-service
+          url: /v3/api-docs
+
+      -   name: client-service
+          url: /clients/v3/api-docs

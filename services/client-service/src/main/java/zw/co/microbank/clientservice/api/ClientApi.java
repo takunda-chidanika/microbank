@@ -13,7 +13,7 @@ import zw.co.microbank.clientservice.service.ClientService;
  * Created on 7/10/25
  */
 @RestController
-@RequestMapping("/api/v1/clients")
+@RequestMapping("/clients")
 @RequiredArgsConstructor
 public class ClientApi {
     private final ClientService clientService;

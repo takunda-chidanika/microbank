@@ -1,4 +1,5 @@
 services:
+
   #  Client key
   keycloak_auth:
     container_name: keycloak_auth
@@ -17,7 +18,6 @@ services:
       - keycloak_data:/opt/keycloak/data
     networks:
       - microservices-net
-
 
   # Client Database
   postgresql_client:

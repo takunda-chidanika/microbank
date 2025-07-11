@@ -12,7 +12,7 @@ import zw.co.microbank.clientservice.service.AdminService;
  */
 
 @RestController
-@RequestMapping("/api/v1/clients/admin")
+@RequestMapping("/clients/admin")
 @RequiredArgsConstructor
 //@PreAuthorize("hasRole('ADMIN')")
 public class AdminApi {

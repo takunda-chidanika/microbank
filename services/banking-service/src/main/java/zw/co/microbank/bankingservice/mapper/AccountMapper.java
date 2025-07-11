@@ -14,11 +14,11 @@ import java.util.UUID;
 
 public class AccountMapper {
     /* Map To Account */
-    public static Account mapToAccount(CreateAccountRequest request) {
+    public static Account mapToAccount(CreateAccountRequest request, String accountNumber) {
 
         return Account.builder()
                 .clientId(request.clientId())
-                .accountNumber(UUID.randomUUID().toString())
+                .accountNumber(accountNumber)
                 .authorisationCode(request.authorisationCode())
                 .balance(request.initialBalance())
                 .build();
@@ -38,4 +38,6 @@ public class AccountMapper {
     public static List<AccountResponse> mapToAccountResponses(List<Account> accounts) {
         return accounts.stream().map(AccountMapper::mapToAccountResponse).toList();
     }
+
+
 }

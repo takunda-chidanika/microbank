@@ -12,6 +12,7 @@ import zw.co.microbank.bankingservice.service.AccountService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Author: tjc
@@ -24,15 +25,18 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountResponse createAccount(CreateAccountRequest request) {
-        var account = AccountMapper.mapToAccount(request);
+        var generatedAccount = generateUniqueAccountNumber();
+        var account = AccountMapper.mapToAccount(request, generatedAccount);
         var createdAccount = accountRepository.save(account);
         return AccountMapper.mapToAccountResponse(createdAccount);
     }
 
     @Override
     public AccountResponse getAccountByClientId(String clientId) {
-
-        return null;
+        var account = accountRepository.findAccountByClientId(clientId).orElseThrow(
+                () -> new ResourceNotFoundException("Account not found")
+        );
+        return AccountMapper.mapToAccountResponse(account);
     }
 
     @Override
@@ -60,5 +64,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public BigDecimal getAccountBalance(String accountNumber) {
         return accountRepository.getBalanceByAccountNumber(accountNumber);
+    }
+
+    private String generateUniqueAccountNumber() {
+        String accountNumber;
+        do {
+            accountNumber = String.format("%06d", new Random().nextInt(1000000));
+        } while (accountRepository.existsByAccountNumber(accountNumber));
+        return accountNumber;
     }
 }

@@ -3,3 +3,24 @@ spring:
     import: optional:configserver:http://localhost:9090
   application:
     name: banking-service
+
+  security:
+      oauth2:
+        resourceserver:
+          jwt:
+            issuer-uri: http://localhost:8080/realms/microbank
+            jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+jwt:
+    auth:
+      converter:
+        resource-id: alibou-rest-api
+        principle-attribute: preferred_username
+
+#springdoc:
+#  api-docs:
+#    enabled: true
+#    path: /banks/v3/api-docs
+#  swagger-ui:
+#    enabled: true
+#    path: /banks/swagger-ui.html

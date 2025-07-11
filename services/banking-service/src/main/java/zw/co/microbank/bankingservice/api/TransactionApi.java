@@ -17,7 +17,7 @@ import java.util.List;
  * Created on 7/10/25
  */
 @RestController
-@RequestMapping("/api/v1/banks/transactions")
+@RequestMapping("/banks/transactions")
 @RequiredArgsConstructor
 public class TransactionApi {
     private final TransactionService transactionService;
