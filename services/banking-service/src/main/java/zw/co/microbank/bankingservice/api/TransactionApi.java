@@ -43,6 +43,14 @@ public class TransactionApi {
         return ResponseEntity.ok(transactions);
     }
 
+    @GetMapping("/account/client/{clientId}")
+    public ResponseEntity<List<TransactionResponse>> getTransactionsByClientId(
+            @PathVariable String clientId) {
+        List<TransactionResponse> transactions =
+                transactionService.getTransactionsByClientId(clientId);
+        return ResponseEntity.ok(transactions);
+    }
+
     @GetMapping("/account/{accountNumber}/details")
     public ResponseEntity<AccountTransactionResponse> getAllTransactionsByAccountNumber(
             @PathVariable String accountNumber) {

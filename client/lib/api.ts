@@ -16,7 +16,7 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
       }
     }
     throw new ApiError(
-      errorData.detail || `API error: ${response.status}`,
+      errorData?.detail || `API error: ${response.status}`,
       response.status,
       errorData
     )

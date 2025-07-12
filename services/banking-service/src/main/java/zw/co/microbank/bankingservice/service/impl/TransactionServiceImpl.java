@@ -1,5 +1,6 @@
 package zw.co.microbank.bankingservice.service.impl;
 
+import ch.qos.logback.core.net.server.Client;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,6 +89,12 @@ public class TransactionServiceImpl implements TransactionService {
     public List<TransactionResponse> getAllTransactions() {
         var transactions = transactionRepository.findAll();
         return TransactionMapper.mapToTransactionResponses(transactions);
+    }
+
+    @Override
+    public List<TransactionResponse> getTransactionsByClientId(String clientId) {
+
+        return List.of();
     }
 
     //    Calculate new balance

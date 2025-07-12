@@ -30,4 +30,6 @@ public interface TransactionService {
 
     /* Get all transactions*/
     List<TransactionResponse> getAllTransactions();
+
+    List<TransactionResponse> getTransactionsByClientId(String clientId);
 }

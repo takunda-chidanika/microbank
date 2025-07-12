@@ -1,8 +1,11 @@
 package zw.co.microbank.clientservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 /**
  * Author: tjc
@@ -15,8 +18,16 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class Client extends BaseEntity {
+public class Client{
+    @Id
+    @Column(unique = true, nullable = false)
+    private String id;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
     @Column(unique = true, nullable = false)
     private String keycloakId;
 

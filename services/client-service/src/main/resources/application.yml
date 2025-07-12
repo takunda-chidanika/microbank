@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: optional:configserver:http://config-server:9090
   application:
     name: client-service
 
@@ -8,8 +6,27 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-            issuer-uri:  http://keycloak_auth:8080/realms/microbank
-            jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/microbank
+          jwk-set-uri: http://localhost:8080/realms/microbank/protocol/openid-connect/certs
+
+  cloud:
+    config:
+      override-system-properties: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/client_db
+    username: root
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
 
 jwt:
   auth:
@@ -18,8 +35,26 @@ jwt:
       principle-attribute: preferred_username
 
 keycloak:
-  server-url: http://keycloak_auth:8080
+  server-url: http://localhost:8080
   realm: microbank
-  client-id: microbank
-  client-secret: SYZd71iMp4TvnUqgPewmbriC48ueqCzy
 
+  client-id: microbank
+  client-secret: foFirb0J7o9KM87Y9y75vw0knTukhRft
+
+  admin-cli: admin-cli
+  admin-secret: SlvI2537ftAaXilDLuiKCz9LWKMsEAOV
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+server:
+  port: 9494
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0

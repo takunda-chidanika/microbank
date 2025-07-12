@@ -95,7 +95,6 @@ public class KeycloakUserServiceImpl implements KeycloakUserService {
         return null;
     }
 
-
     public AccessTokenResponse getUserAccessToken(String username, String password) {
         try {
             log.info("Attempting to get access token for user: {}", username);

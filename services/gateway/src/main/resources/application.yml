@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    config:
+      override-system-properties: false
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: client-service
+              uri: lb://client-service
+              predicates:
+                - Path=/clients/**
+
+            - id: banking-service
+              uri: lb://banking-service
+              predicates:
+                - Path=/banks/**
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: gateway-service
+        url: /v3/api-docs
+
+      - name: client-service
+        url: /clients/v3/api-docs
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+server:
+  port: 9393

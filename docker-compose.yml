@@ -74,9 +74,11 @@ services:
 #      image: tjc2746/config-server:latest
 #      container_name: config-server
 #      ports:
-#        - "8888:8888"
+#        - "9090:9090"
 #      networks:
 #        - microservices-net
+#      volumes:
+#        - ./config-repo:/config-repo
 #
 #    # DISCOVERY SERVICE (Eureka)
 #  discovery-service:
@@ -87,22 +89,22 @@ services:
 #      depends_on:
 #        - config-server
 #      environment:
-#        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888/
+#        - SPRING_CONFIG_IMPORT=configserver:http://config-server:9090/
 #      networks:
 #        - microservices-net
-#
+
 #    # BANKING SERVICE
 #  banking-service:
 #      image: tjc2746/banking-service:latest
 #      container_name: banking-service
 #      ports:
-#        - "8081:8081"
+#        - "9094:8081"
 #      depends_on:
 #        - config-server
 #        - discovery-service
-#        - banking-db
+#        - postgresql_bank
 #      environment:
-#        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888/
+#        - SPRING_CONFIG_IMPORT=configserver:http://config-server:9096/
 #        - SPRING_DATASOURCE_URL=jdbc:postgresql://microbank_client_db:5432/bank_db
 #        - SPRING_DATASOURCE_USERNAME=root
 #        - SPRING_DATASOURCE_PASSWORD=password
@@ -114,13 +116,13 @@ services:
 #      image: tjc2746/client-service:latest
 #      container_name: client-service
 #      ports:
-#        - "8082:8082"
+#        - "9092:8082"
 #      depends_on:
 #        - config-server
 #        - discovery-service
-#        - client-db
+#        - postgresql_client
 #      environment:
-#        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888/
+#        - SPRING_CONFIG_IMPORT=configserver:http://config-server:9096/
 #        - SPRING_DATASOURCE_URL=jdbc:postgresql://microbank_client_db:5432/client_db
 #        - SPRING_DATASOURCE_USERNAME=root
 #        - SPRING_DATASOURCE_PASSWORD=password
@@ -132,12 +134,12 @@ services:
 #      image: tjc2746/gateway:latest
 #      container_name: gateway
 #      ports:
-#        - "8080:8080"
+#        - "9090:8080"
 #      depends_on:
 #        - config-server
 #        - discovery-service
 #      environment:
-#        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888/
+#        - SPRING_CONFIG_IMPORT=configserver:http://config-server:9096/
 #      networks:
 #        - microservices-net
 

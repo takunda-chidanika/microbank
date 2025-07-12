@@ -13,14 +13,25 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(UserRegistrationException.class)
+    public ProblemDetail handleUserRegistrationException(UserRegistrationException e) {
+        var problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                e.getMessage()
+        );
+
+        problemDetail.setTitle("Bad Request");
+        return problemDetail;
+    }
+
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ProblemDetail handleResourceAlreadyExistsException(ResourceAlreadyExistsException e) {
         var problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.CONFLICT,
                 e.getMessage()
         );
-        problemDetail.setTitle("Conflict");
 
+        problemDetail.setTitle("Conflict");
         return problemDetail;
     }
 
@@ -30,8 +41,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 e.getMessage()
         );
-        problemDetail.setTitle("Not Found");
 
+        problemDetail.setTitle("Not Found");
         return problemDetail;
     }
 }

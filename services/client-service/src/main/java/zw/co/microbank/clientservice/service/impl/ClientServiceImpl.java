@@ -34,11 +34,16 @@ public class ClientServiceImpl implements ClientService {
 
         var keycloakId = keycloakUserService.createUser(request).getId();
 
+        if (keycloakId == null) {
+            throw new ResourceAlreadyExistsException("Client", request.email());
+        }
+
         keycloakUserService.createUser(request);
 
         if (!clientExistByEmail) {
 
             var clientRequest = Client.builder()
+                    .id(keycloakId)
                     .name(request.name())
                     .email(request.email())
                     .keycloakId(keycloakId)
