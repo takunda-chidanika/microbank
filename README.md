@@ -1,6 +1,14 @@
 
 # MicroBank Backend API Documentation
 
+##  Banking Service
+![Banking Service](./screenshots/banking-service.png)
+*Banking service successfully running with Keycloak integration*
+
+##  Client Service
+![Client Service](./screenshots/client-service.png)
+*Client service with user registration and authentication*
+
 ## Overview
 Enterprise-grade microservices banking platform with Spring Boot, Keycloak authentication, and comprehensive API coverage. All services are production-ready with OpenAPI 3.1 documentation and security implementations.
 
