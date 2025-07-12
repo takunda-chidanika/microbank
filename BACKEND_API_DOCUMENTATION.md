@@ -76,7 +76,7 @@ Response (200):
 
 #### Protected Endpoints
 
-**GET /clients/profile/{id}** 🔒
+**GET /clients/profile/{id}** [Protected]
 ```json
 Response (200):
 {
