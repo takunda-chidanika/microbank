@@ -9,9 +9,6 @@
 ![Client Service](./screenshots/client-service.png)
 *Client service with user registration and authentication*
 
-## Overview
-Enterprise-grade microservices banking platform with Spring Boot, Keycloak authentication, and comprehensive API coverage. All services are production-ready with OpenAPI 3.1 documentation and security implementations.
-
 ## Architecture
 - **Gateway Service**: Spring Cloud Gateway (Port 9393)
 - **Client Service**: User management & authentication (Port 9494)
